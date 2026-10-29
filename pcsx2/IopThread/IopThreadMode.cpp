@@ -53,7 +53,8 @@ IopThreadMode IopThread::ResolveMode(const Pcsx2Config& config, const HostCpuInf
 
 	// EE and GS threads, the IOP thread, and the VU1 thread when MTVU is on.
 	const u32 threads = 2 + (config.Speedhacks.vuThread ? 1 : 0) + 1;
-	const u32 spare_cores_for_the_rest = 2;
+	// TEST BUILD ONLY (ci/pi5-test): no spare cores required, to measure the IOP thread on a 4-core Raspberry Pi 5.
+	const u32 spare_cores_for_the_rest = 0;
 	if (host.performance_cores < threads || host.total_cores < threads + spare_cores_for_the_rest)
 		return IopThreadMode::Off;
 
