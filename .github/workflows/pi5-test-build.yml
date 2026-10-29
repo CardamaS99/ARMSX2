@@ -1,0 +1,20 @@
+# Test build for checking the cpuinfo cluster fix on a Raspberry Pi 5 (16K-page kernel).
+# Only on this branch; not part of the pull request.
+name: Pi 5 test build
+
+on:
+  push:
+    branches:
+      - ci/pi5-test
+  workflow_dispatch:
+
+jobs:
+  linux-arm64-16k:
+    name: Linux arm64 (16k pages)
+    uses: ./.github/workflows/linux_build_qt.yml
+    with:
+      jobName: "Linux arm64 (16k pages)"
+      artifactPrefixName: "armsx2-linux-arm64-16k-appimage"
+      compiler: clang
+      cmakeflags: "-DHOST_PAGE_SIZE=16384 -DHOST_CACHE_LINE_SIZE=128"
+      buildAppImage: true
