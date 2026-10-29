@@ -6,6 +6,7 @@
 #include "Config.h"
 
 #include <algorithm>
+#include <cstdlib>
 
 IopThreadMode IopThread::s_mode = IopThreadMode::Off;
 
@@ -53,8 +54,9 @@ IopThreadMode IopThread::ResolveMode(const Pcsx2Config& config, const HostCpuInf
 
 	// EE and GS threads, the IOP thread, and the VU1 thread when MTVU is on.
 	const u32 threads = 2 + (config.Speedhacks.vuThread ? 1 : 0) + 1;
-	// TEST BUILD ONLY (ci/pi5-test): no spare cores required, to measure the IOP thread on a 4-core Raspberry Pi 5.
-	const u32 spare_cores_for_the_rest = 0;
+	// TEST BUILD ONLY (ci/pi5-test): ARMSX2_IOP_NO_SPARE_CORES=1 drops the spare-core rule, to measure the IOP
+	// thread on a 4-core Raspberry Pi 5. Without it the rule is unchanged.
+	const u32 spare_cores_for_the_rest = std::getenv("ARMSX2_IOP_NO_SPARE_CORES") ? 0 : 2;
 	if (host.performance_cores < threads || host.total_cores < threads + spare_cores_for_the_rest)
 		return IopThreadMode::Off;
 
